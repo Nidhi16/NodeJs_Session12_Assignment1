@@ -1,13 +1,11 @@
-var server_port = 8000;
-var backend_url = "http://localhost:8123";
-var app   = require('express')();
-var http = require('http').Server(app);
-var session = require('express-session');
 var express   = require('express');
+var app = express();
+var session = require('express-session');
+
+var port = process.env.PORT || 8000;
+
 app.use(session({
-    secret: 'test session',
-    resave: false,
-    saveUninitialized: true
+    secret: 'test session'
 }));
 
 app.get('/setsession',function(req,res){
@@ -23,9 +21,9 @@ app.get('/setsession',function(req,res){
 });
 
 app.get('/logshow', function (req, res) {
-	var sess=req.session;
-	var email = sess.user_email;
-      console.log(email);
+	var sess=req.session.sessdata;
+	var email = sess.email;
+    res.json(email);
 });
 
 app.get('/destroysession',function(req,res){
@@ -73,12 +71,9 @@ app.get('/savesession',function(req,res){
             data["Data"] = 'Session saved successfully';
             res.json(data);
         }
-    })
+    });
 });
 
-var server = app.listen(server_port, function () {
-  var host = server.address().address;
-  var port = server.address().port;
-
-  console.log('Example app listening at http://%s:%s', host, port);
+app.listen(port, function(){
+    console.log("Listening to port " + port);
 });
